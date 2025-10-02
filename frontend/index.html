@@ -1,0 +1,61 @@
+<!-- frontend/index.html -->
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Intel Ingest — Mini UI</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{font-family:system-ui,Segoe UI,Arial;padding:16px;max-width:900px;margin:auto;}label{display:block;margin-top:10px}input,select,textarea{width:100%;padding:8px;margin-top:6px}</style>
+</head>
+<body>
+<h1>Lightweight Intel Ingest</h1>
+<p>Admin token is required. Set ADMIN_TOKEN as env var; pass it in the &quot;token&quot; query param for simplicity (prototype).</p>
+
+
+<h2>Save provider creds</h2>
+<label>Provider</label><input id="provider" placeholder="recordedfuture">
+<label>Name (optional)</label><input id="name">
+<label>API Key</label><input id="apikey" type="password">
+<label>Admin Token</label><input id="admintoken" type="password">
+<button id="saveCreds">Save Creds</button>
+<div id="credsRes"></div>
+
+
+<h2>Ingest</h2>
+<label>Provider</label><input id="ingProvider" value="recordedfuture">
+<label>Query</label><input id="ingQuery">
+<label>Forward to OpenAI?</label><select id="forward"><option value="false">No</option><option value="true">Yes</option></select>
+<label>Admin Token</label><input id="admintoken2" type="password">
+<button id="runIngest">Run Ingest</button>
+<pre id="ingRes"></pre>
+
+
+<script>
+async function post(url, body, token){
+const qp = token? '?token='+encodeURIComponent(token) : ''
+const res = await fetch(url+qp, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+return res.json();
+}
+
+
+document.getElementById('saveCreds').onclick = async ()=>{
+const provider=document.getElementById('provider').value;
+const name=document.getElementById('name').value;
+const apikey=document.getElementById('apikey').value;
+const token=document.getElementById('admintoken').value;
+const resp = await post('/api/creds', {provider, name, api_key: apikey}, token);
+document.getElementById('credsRes').innerText = JSON.stringify(resp, null, 2);
+}
+
+
+document.getElementById('runIngest').onclick = async ()=>{
+const provider=document.getElementById('ingProvider').value;
+const query=document.getElementById('ingQuery').value;
+const forward=document.getElementById('forward').value === 'true';
+const token=document.getElementById('admintoken2').value;
+const resp = await post('/api/ingest', {provider, query, forward_to_openai: forward}, token);
+document.getElementById('ingRes').innerText = JSON.stringify(resp, null, 2);
+}
+</script>
+</body>
+</html>
