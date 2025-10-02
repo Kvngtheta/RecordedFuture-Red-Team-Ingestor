@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+app:
+build: .
+environment:
+- MASTER_KEY=${MASTER_KEY}
+- ADMIN_TOKEN=${ADMIN_TOKEN}
+- OPENAI_API_KEY=${OPENAI_API_KEY}
+volumes:
+- ./intel.db:/app/intel.db
+ports:
+- "8000:8000"
