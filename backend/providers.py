@@ -1,5 +1,5 @@
-# backend/providers.py
-# Minimal Recorded Future adapter and generic provider interface.
+
+# Recorded Future adapter .
 import requests
 from typing import List, Dict
 
@@ -19,7 +19,7 @@ BASE_URL = 'https://api.recordedfuture.com/v2' # placeholder - verify before use
 
 
 def search(self, query: str) -> List[Dict]:
-# Example: recorded future has multiple endpoints; this is pseudocode.
+# Example: recorded future has multiple endpoints; this is pseudocode. Ntoe to self: find actual endponts
 headers = {'X-RFToken': self.api_key, 'Accept': 'application/json'}
 params = {'query': query}
 resp = requests.get(f'{self.BASE_URL}/enrichment/query', headers=headers, params=params, timeout=30)
@@ -34,4 +34,5 @@ items.append({
 'title': hit.get('title') or hit.get('name') or query,
 'body': hit.get('attributes', {}).get('description', str(hit))
 })
+
 return items
